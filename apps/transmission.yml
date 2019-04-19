@@ -62,8 +62,8 @@
         pg_env:
           PUID: '1000'
           PGID: '1000'
-          OPENVPN_PROVIDER: 'see available configs at https://git.io/fpCSF'
-          OPENVPN_CONFIG: 'see available configs at https://git.io/fpCSF'
+          OPENVPN_PROVIDER: 'see https://git.io/fpCSF'
+          OPENVPN_CONFIG: 'see https://git.io/fpCSF'
           OPENVPN_USERNAME: 'vpnuser'
           OPENVPN_PASSWORD: 'vpnpass'
           OPENVPN_OPTS: '--inactive 3600 --ping 10 --ping-exit 60'
@@ -73,13 +73,13 @@
           LOCAL_NETWORK: 192.168.0.0/24
           TRANSMISSION_WEB_HOME: '/config/webui-theme'
           TRANSMISSION_WEB_UI: 'transmission-web-control'
-          TRANSMISSION_BLOCKLIST_ENABLED: 'true'
+          TRANSMISSION_BLOCKLIST_ENABLED: 'false'
           TRANSMISSION_BLOCKLIST_URL: 'http://john.bitsurge.net/public/biglist.p2p.gz'
           TRANSMISSION_DHT_ENABLED: 'false'
           TRANSMISSION_DOWNLOAD_DIR: '/mnt/downloads/{{pgrole}}'
           TRANSMISSION_INCOMPLETE_DIR: '/mnt/incomplete/{{pgrole}}'
           TRANSMISSION_RPC_PORT: '{{intport}}'
-          TRANSMISSION_WATCH_DIR: '/config/watch'
+          TRANSMISSION_WATCH_DIR: '/mnt/torrent/watch'
           TRANSMISSION_WATCH_DIR_ENABLED: 'false'
           TRANSMISSION_HOME: '/config/home'
 
@@ -109,6 +109,9 @@
           - name: plexguide
             aliases:
               - '{{pgrole}}'
+        dns_servers:
+          - 8.8.8.8
+          - 8.8.4.4
         state: started
         labels: '{{pg_labels}}'
 
