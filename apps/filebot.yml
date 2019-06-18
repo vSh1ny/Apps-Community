@@ -1,9 +1,9 @@
 #!/bin/bash
 #
-# Title:      PGBlitz (Reference Title File)
-# Author(s):  Admin9705
+# Title:      PGBlitz (jlesage/filebot)
+# Author(s):  MrDoob
 # URL:        https://pgblitz.com - http://github.pgblitz.com
-# GNU:        General Public License v3.0
+# GNU:        General Public License v3.0 
 ################################################################################
 ---
 - hosts: localhost
@@ -12,10 +12,12 @@
     # FACTS #######################################################################
     - name: 'Set Known Facts'
       set_fact:
-        pgrole: 'organizr'
-        intport: '80'
-        extport: '8040'
-        image: 'organizrtools/organizr-v2'
+        pgrole: 'filebot'
+        intport: '5800'
+        extport: '5804'
+        intport2: '5900'
+        extport2: '5903'
+        image: 'jlesage/filebot'
 
     # CORE (MANDATORY) ############################################################
     - name: 'Including cron job'
@@ -29,21 +31,13 @@
           traefik.enable: 'true'
           traefik.port: '{{intport}}'
           traefik.frontend.rule: 'Host:{{pgrole}}.{{domain.stdout}},{{tldset}}'
-          traefik.frontend.headers.SSLHost: '{{domain.stdout}}'
-          traefik.frontend.headers.SSLRedirect: 'true'
-          traefik.frontend.headers.STSIncludeSubdomains: 'true'
-          traefik.frontend.headers.STSPreload: 'true'
-          traefik.frontend.headers.STSSeconds: '315360000'
-          traefik.frontend.headers.browserXSSFilter: 'true'
-          traefik.frontend.headers.contentTypeNosniff: 'true'
-          traefik.frontend.headers.customResponseHeaders: 'X-Robots-Tag:noindex,nofollow,nosnippet,noarchive,notranslate,noimageindex'
-          traefik.frontend.headers.forceSTSHeader: 'true'
-          traefik.frontend.headers.frameDeny: 'true'
 
     - name: 'Setting PG Volumes'
       set_fact:
         pg_volumes:
           - '/opt/appdata/{{pgrole}}:/config'
+          - '{{path.stdout}}:{{path.stdout}}'
+          - '/mnt:/storage:rw'
           - '/etc/localtime:/etc/localtime:ro'
 
     - name: 'Setting PG ENV'
@@ -51,7 +45,8 @@
         pg_env:
           PUID: '1000'
           PGID: '1000'
-
+          TZ: '${TZ}'
+          
     # MAIN DEPLOYMENT #############################################################
     - name: 'Deploying {{pgrole}}'
       docker_container:
@@ -60,6 +55,7 @@
         pull: yes
         published_ports:
           - '{{ports.stdout}}{{extport}}:{{intport}}'
+          - '{{ports.stdout}}{{extport2}}:{{intport2}}'
         volumes: '{{pg_volumes}}'
         env: '{{pg_env}}'
         restart_policy: unless-stopped
